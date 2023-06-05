@@ -1,0 +1,4 @@
+
+[submodule "data/deunicode"]
+	path = data/deunicode
+	url = https://github.com/kornelski/deunicode.git
