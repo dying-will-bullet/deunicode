@@ -4,7 +4,7 @@ const pkg_name = "deunicode";
 const pkg_path = "../src/lib.zig";
 
 const examples = .{
-    "default",
+    "unicode",
 };
 
 pub fn build(b: *std.build.Builder) void {

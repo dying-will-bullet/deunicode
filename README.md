@@ -1,6 +1,9 @@
-# deunicode
+<h1 align="center"> deunicode </h1>
 
-The `deunicode` library transliterates Unicode strings such as "Æneid" into pure
+[![CI](https://github.com/dying-will-bullet/deunicode/actions/workflows/ci.yaml/badge.svg)](https://github.com/dying-will-bullet/deunicode/actions/workflows/ci.yaml)
+![](https://img.shields.io/badge/language-zig-%23ec915c)
+
+The `deunicode` library(aka. `unidecode`) transliterates Unicode strings such as "Æneid" into pure
 ASCII ones such as "AEneid."
 
 This is an implementation of Rust's [deunicode](https://github.com/kornelski/deunicode) crate in Zig, using its own Unicode mapping data. Therefore, it is distributed under the same license.
