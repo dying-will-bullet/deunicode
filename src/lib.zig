@@ -21,7 +21,7 @@ var POINTERS = @ptrCast(*[]const Ptr, @alignCast(@alignOf(*[]const Ptr), @constC
 
 // Convert Unicode points to their ASCII representation. Write to the dest, and return the slice.
 // If not found, return null. Additionally, the function can also write an empty string.
-fn getReplacement(cp: u21) ?[]const u8 {
+pub fn getReplacement(cp: u21) ?[]const u8 {
     const i = @as(usize, cp);
     if (i >= POINTERS.*.len) {
         return null;
