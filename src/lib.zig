@@ -15,24 +15,25 @@ const Ptr = struct {
     len: u8 align(1),
 };
 
-const POINTERS = @embedFile("./pointers.bin");
+const RAW_POINTERS = @embedFile("./pointers.bin");
 const MAPPING = @embedFile("./mapping.txt");
+var POINTERS = @ptrCast(*[]const Ptr, @alignCast(@alignOf(*[]const Ptr), @constCast(&RAW_POINTERS)));
 
 // Convert Unicode points to their ASCII representation. Write to the dest, and return the slice.
 // If not found, return null. Additionally, the function can also write an empty string.
-fn getReplacement(cp: u21, ptrs: *[]const Ptr, dest: []u8) ?[]const u8 {
-    const pointers = ptrs.*;
-
+fn getReplacement(cp: u21) ?[]const u8 {
     const i = @as(usize, cp);
-    if (i >= pointers.len) {
+    if (i >= POINTERS.*.len) {
         return null;
     }
 
-    const p = pointers[i];
+    const p = POINTERS.*[i];
 
     // if length is 1 or 2, then the "pointer" data is used to store the char
     const chars = if (p.len <= 2) blk: {
-        break :blk p.chr[0..@as(usize, p.len)];
+        // NOTE: not p.chr
+        // break :blk POINTERS.*[i].chr[0..@as(usize, p.len)];
+        break :blk POINTERS.*[i].chr[0..@as(usize, p.len)];
     } else blk: {
         const map_pos = @as(usize, (@as(u16, p.chr[0]) | (@as(u16, p.chr[1]) << 8)));
         // unknown characters are intentionally mapped to out of range length
@@ -41,14 +42,10 @@ fn getReplacement(cp: u21, ptrs: *[]const Ptr, dest: []u8) ?[]const u8 {
         if (start >= MAPPING.len or end >= MAPPING.len) {
             return null;
         }
-        // break :blk MAPPING.*[start..end];
-        break :blk MAPPING[start..end];
+        break :blk MAPPING.*[start..end];
     };
 
-    // return chars;
-    std.mem.copy(u8, dest[0..chars.len], chars);
-
-    return dest[0..chars.len];
+    return chars;
 }
 
 // --------------------------------------------------------------------------------
@@ -85,7 +82,6 @@ pub fn deunicode(allocator: Allocator, s: []const u8) ![]const u8 {
 ///
 /// You can use "\u{FFFD}" to use the usual Unicode Replacement Character.
 pub fn deunicodeCustom(allocator: Allocator, s: []const u8, custom_placeholder: []const u8) ![]const u8 {
-    const ptrs = @ptrCast(*[]const Ptr, @alignCast(@alignOf(*[]const Ptr), @constCast(&POINTERS)));
 
     // Fast path to skip over ASCII chars at the beginning of the string
     var ascii_len: usize = 0;
@@ -114,8 +110,6 @@ pub fn deunicodeCustom(allocator: Allocator, s: []const u8, custom_placeholder: 
 
     var iter = (try unicode.Utf8View.init(rest)).iterator();
     var codepoint = iter.nextCodepoint();
-    // TODO:
-    var buf: [41]u8 = undefined;
 
     // cache next
     var has_next_cache = false;
@@ -125,7 +119,7 @@ pub fn deunicodeCustom(allocator: Allocator, s: []const u8, custom_placeholder: 
         const res = if (has_next_cache) blk: {
             break :blk next_cache;
         } else blk: {
-            break :blk getReplacement(codepoint.?, ptrs, &buf);
+            break :blk getReplacement(codepoint.?);
         };
 
         // move codepoint to next
@@ -150,7 +144,7 @@ pub fn deunicodeCustom(allocator: Allocator, s: []const u8, custom_placeholder: 
         var space_or_end_next = true;
         // this is the next codepoint
         if (codepoint != null) {
-            const ch = getReplacement(codepoint.?, ptrs, &buf);
+            const ch = getReplacement(codepoint.?);
             has_next_cache = true;
             next_cache = ch;
             if (ch == null) {
