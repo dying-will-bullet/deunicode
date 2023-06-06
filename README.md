@@ -13,15 +13,21 @@ This is an implementation of Rust's [deunicode](https://github.com/kornelski/deu
 ```zig
 const std = @import("std");
 const deunicode = @import("deunicode").deunicode;
+const deunicodeAlloc = @import("deunicode").deunicodeAlloc;
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
 
-    const res = try deunicode(allocator, "世界和平");
+    // Using allocator, caller should free the memory
+    const res = try deunicodeAlloc(allocator, "世界和平");
     defer allocator.free(res);
 
-    // Shi Jie He Ping
-    std.debug.print("{s}\n", .{res});
+    std.debug.print("{s}\n", .{res});  // Shi Jie He Ping
+
+    // Using the buffer
+    var buffer: [1024]u8 = undefined;
+    const len = try deunicode(&buffer, "おはよう");
+    std.debug.print("{s}\n", .{buffer[0..len]});  // ohayou
 }
 ```
 
