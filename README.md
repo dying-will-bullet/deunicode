@@ -31,6 +31,64 @@ pub fn main() !void {
 }
 ```
 
+## API Doc
+
+- `fn deunicodeAlloc(allocator: Allocator, s: []const u8) ![]const u8`:  
+Return new string, caller should free memory.
+- `fn deunicode(out: []u8, s: []const u8) ![]const u8`:  
+Use buffer instead of allocator. Retrun a string slice.
+
+When an ASCII replacement cannot be found, the default placeholder `[?]` is used.
+If you want to customize the placeholder, you can use the following API.
+
+- `fn deunicodeCustomAlloc(allocator: Allocator, s: []const u8, custom_placeholder: []const u8) ![]const u8`
+- `fn deunicodeCustom(out: []u8, s: []const u8, custom_placeholder: []const u8) ![]const u8`
+
+## Installation
+
+Add `deunicode` as dependency in `build.zig.zon`:
+
+```
+.{
+    .name = "my-project",
+    .version = "0.1.0",
+    .dependencies = .{
+       .deunicode = .{
+           .url = "https://github.com/dying-will-bullet/deunicode/archive/refs/tags/v0.1.0.tar.gz",
+           .hash = "1220d625af77ca19f1294a8806348107e01c62ef810cc3fa057881f957fe5691e4f6",
+       },
+    },
+}
+```
+
+Expose `deunicode` as a module in `build.zig`:
+
+```diff
+diff --git a/build.zig b/build.zig
+index 60fb4c2..0255ef3 100644
+--- a/build.zig
++++ b/build.zig
+@@ -15,6 +15,9 @@ pub fn build(b: *std.Build) void {
+     // set a preferred release mode, allowing the user to decide how to optimize.
+     const optimize = b.standardOptimizeOption(.{});
+
++    const opts = .{ .target = target, .optimize = optimize };
++    const deunicode_module = b.dependency("deunicode", opts).module("deunicode");
++
+     const exe = b.addExecutable(.{
+         .name = "m",
+         // In this case the main source file is merely a path, however, in more
+@@ -23,6 +26,7 @@ pub fn build(b: *std.Build) void {
+         .target = target,
+         .optimize = optimize,
+     });
++    exe.addModule("deunicode", deunicode_module);
+
+     // This declares intent for the executable to be installed into the
+     // standard location when the user invokes the "install" step (the default
+
+```
+
 ## Guarantees and Warnings
 
 Here are some guarantees you have when calling `deunicode()`:
