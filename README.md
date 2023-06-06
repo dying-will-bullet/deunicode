@@ -26,8 +26,8 @@ pub fn main() !void {
 
     // Using the buffer
     var buffer: [1024]u8 = undefined;
-    const len = try deunicode(&buffer, "おはよう");
-    std.debug.print("{s}\n", .{buffer[0..len]});  // ohayou
+    const res2 = try deunicode(&buffer, "おはよう");
+    std.debug.print("{s}\n", .{res2});  // ohayou
 }
 ```
 

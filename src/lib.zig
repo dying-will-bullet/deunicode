@@ -78,7 +78,7 @@ pub fn deunicodeAlloc(allocator: Allocator, s: []const u8) ![]const u8 {
     return try deunicodeCustomAlloc(allocator, s, "[?]");
 }
 
-pub fn deunicode(out: []u8, s: []const u8) !usize {
+pub fn deunicode(out: []u8, s: []const u8) ![]const u8 {
     return try deunicodeCustom(out, s, "[?]");
 }
 
@@ -166,7 +166,7 @@ pub fn deunicodeCustomAlloc(allocator: Allocator, s: []const u8, custom_placehol
     return out.toOwnedSlice();
 }
 
-pub fn deunicodeCustom(out: []u8, s: []const u8, custom_placeholder: []const u8) !usize {
+pub fn deunicodeCustom(out: []u8, s: []const u8, custom_placeholder: []const u8) ![]const u8 {
     var cursor: usize = 0;
 
     // Fast path to skip over ASCII chars at the beginning of the string
@@ -183,7 +183,7 @@ pub fn deunicodeCustom(out: []u8, s: []const u8, custom_placeholder: []const u8)
     cursor += ascii_len;
 
     if (ascii_len >= s.len) {
-        return s.len;
+        return out[0..s.len];
     }
 
     // rest's length must >= 1
@@ -244,7 +244,7 @@ pub fn deunicodeCustom(out: []u8, s: []const u8, custom_placeholder: []const u8)
         }
     }
 
-    return cursor;
+    return out[0..cursor];
 }
 
 // --------------------------------------------------------------------------------
@@ -269,8 +269,7 @@ fn checkConversionBuf(str: []const u8, expect: []const u8) !bool {
 
     var buf: [1024]u8 = undefined;
 
-    const len = try deunicode(&buf, str);
-    const res = buf[0..len];
+    const res = try deunicode(&buf, str);
 
     return std.mem.eql(u8, res, expect);
 }
