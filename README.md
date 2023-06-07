@@ -1,4 +1,4 @@
-<h1 align="center"> deunicode </h1>
+<h1 align="center"> deunicode 🪚 </h1>
 
 [![CI](https://github.com/dying-will-bullet/deunicode/actions/workflows/ci.yaml/badge.svg)](https://github.com/dying-will-bullet/deunicode/actions/workflows/ci.yaml)
 ![](https://img.shields.io/badge/language-zig-%23ec915c)
@@ -34,9 +34,9 @@ pub fn main() !void {
 ## API Doc
 
 - `fn deunicodeAlloc(allocator: Allocator, s: []const u8) ![]const u8`:  
-Return new string, caller should free memory.
+  Return new string, caller should free memory.
 - `fn deunicode(out: []u8, s: []const u8) ![]const u8`:  
-Use buffer instead of allocator. Retrun a string slice.
+  Use buffer instead of allocator. Retrun a string slice.
 
 When an ASCII replacement cannot be found, the default placeholder `[?]` is used.
 If you want to customize the placeholder, you can use the following API.
