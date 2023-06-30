@@ -17,7 +17,7 @@ const Ptr = struct {
 
 const RAW_POINTERS = @embedFile("./pointers.bin");
 const MAPPING = @embedFile("./mapping.txt");
-var POINTERS = @ptrCast(*[]const Ptr, @alignCast(@alignOf(*[]const Ptr), @constCast(&RAW_POINTERS)));
+var POINTERS: *[]const Ptr = @ptrCast(@alignCast(@constCast(&RAW_POINTERS)));
 
 // Convert Unicode points to their ASCII representation. Write to the dest, and return the slice.
 // If not found, return null. Additionally, the function can also write an empty string.
