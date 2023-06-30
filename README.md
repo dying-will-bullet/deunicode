@@ -54,8 +54,8 @@ Add `deunicode` as dependency in `build.zig.zon`:
     .version = "0.1.0",
     .dependencies = .{
        .deunicode = .{
-           .url = "https://github.com/dying-will-bullet/deunicode/archive/refs/tags/v0.1.0.tar.gz",
-           .hash = "1220d625af77ca19f1294a8806348107e01c62ef810cc3fa057881f957fe5691e4f6",
+           .url = "https://github.com/dying-will-bullet/deunicode/archive/refs/tags/v0.1.1.tar.gz",
+           .hash = "1220fef06e2fab740b409eaec28fee459526c86f297e6c43fdaee471084cc569f397",
        },
     },
 }
