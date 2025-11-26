@@ -5,8 +5,6 @@ on:
     branches: ["master"]
   pull_request:
     branches: ["master"]
-  schedule:
-    - cron: "0 12 * * 0"
   workflow_dispatch:
 
 jobs:
@@ -14,11 +12,10 @@ jobs:
     name: Tests on Linux
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: goto-bus-stop/setup-zig@v2
-      - uses: Hanaasagi/zig-action-cache@v1.1.4
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
         with:
-          cache-on-failure: true
+          version: 0.15.1
       - run: zig version
       - run: zig env
       - name: Build
