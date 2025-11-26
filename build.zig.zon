@@ -1,5 +1,11 @@
 .{
-    .name = "deunicode",
+    .name = .deunicode,
     .version = "0.1.0",
+    .fingerprint = 0x315001c71c0958c8,
     .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
 }

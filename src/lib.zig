@@ -102,7 +102,7 @@ pub fn deunicodeCustomAlloc(allocator: Allocator, s: []const u8, custom_placehol
 
     // reserve a bit more space to avoid reallocations on longer transliterations
     // but instead of `+ 16` uses `| 15` to stay in the smallest allocation bucket for short strings
-    var out = try std.ArrayList(u8).initCapacity(allocator, s.len | 15);
+    var out = try std.array_list.Managed(u8).initCapacity(allocator, s.len | 15);
     defer out.deinit();
 
     const ascii = s[0..ascii_len];
@@ -179,7 +179,7 @@ pub fn deunicodeCustom(out: []u8, s: []const u8, custom_placeholder: []const u8)
         break;
     }
 
-    std.mem.copy(u8, out[cursor .. cursor + ascii_len], s[0..ascii_len]);
+    std.mem.copyForwards(u8, out[cursor .. cursor + ascii_len], s[0..ascii_len]);
     cursor += ascii_len;
 
     if (ascii_len >= s.len) {
@@ -208,14 +208,14 @@ pub fn deunicodeCustom(out: []u8, s: []const u8, custom_placeholder: []const u8)
         has_next_cache = false;
 
         if (res == null) {
-            std.mem.copy(u8, out[cursor .. cursor + custom_placeholder.len], custom_placeholder);
+            std.mem.copyForwards(u8, out[cursor .. cursor + custom_placeholder.len], custom_placeholder);
             cursor += custom_placeholder.len;
             continue;
         }
 
         const chars = res.?;
 
-        std.mem.copy(u8, out[cursor .. cursor + chars.len], chars);
+        std.mem.copyForwards(u8, out[cursor .. cursor + chars.len], chars);
         cursor += chars.len;
 
         // true if end
