@@ -179,7 +179,7 @@ pub fn deunicodeCustom(out: []u8, s: []const u8, custom_placeholder: []const u8)
         break;
     }
 
-    std.mem.copyForwards(u8, out[cursor .. cursor + ascii_len], s[0..ascii_len]);
+    @memcpy(out[cursor .. cursor + ascii_len], s[0..ascii_len]);
     cursor += ascii_len;
 
     if (ascii_len >= s.len) {
@@ -208,14 +208,14 @@ pub fn deunicodeCustom(out: []u8, s: []const u8, custom_placeholder: []const u8)
         has_next_cache = false;
 
         if (res == null) {
-            std.mem.copyForwards(u8, out[cursor .. cursor + custom_placeholder.len], custom_placeholder);
+            @memcpy(out[cursor .. cursor + custom_placeholder.len], custom_placeholder);
             cursor += custom_placeholder.len;
             continue;
         }
 
         const chars = res.?;
 
-        std.mem.copyForwards(u8, out[cursor .. cursor + chars.len], chars);
+        @memcpy(out[cursor .. cursor + chars.len], chars);
         cursor += chars.len;
 
         // true if end
