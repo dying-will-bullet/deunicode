@@ -1,6 +1,6 @@
 .{
     .name = .deunicode,
-    .version = "0.1.0",
+    .version = "0.1.2",
     .fingerprint = 0x315001c71c0958c8,
     .dependencies = .{},
     .paths = .{
