@@ -9,16 +9,27 @@ on:
 
 jobs:
   test:
-    name: Tests on Linux
-    runs-on: ubuntu-latest
+    name: Tests on ${{ matrix.os }} with Zig ${{ matrix.zig }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        zig: [0.15.1, 0.15.2, master]
     steps:
       - uses: actions/checkout@v4
+
       - uses: mlugg/setup-zig@v2
         with:
-          version: 0.15.2
-      - run: zig version
-      - run: zig env
+          version: ${{ matrix.zig }}
+
+      - name: Zig Version
+        run: zig version
+
+      - name: Zig Env
+        run: zig env
+
       - name: Build
         run: zig build --verbose
+
       - name: Run Tests
         run: zig build test
