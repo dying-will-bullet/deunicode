@@ -19,13 +19,31 @@ const RAW_POINTERS = @embedFile("./pointers.bin");
 const MAPPING = @embedFile("./mapping.txt");
 var POINTERS: *[]const Ptr = @ptrCast(@alignCast(@constCast(&RAW_POINTERS)));
 
+comptime {
+    if (@sizeOf(Ptr) != 3) {
+        @compileError("Ptr layout mismatch");
+    }
+}
+
 // Convert Unicode points to their ASCII representation. Write to the dest, and return the slice.
 // If not found, return null. Additionally, the function can also write an empty string.
 pub fn getReplacement(cp: u21) ?[]const u8 {
+    const ptr_size = @sizeOf(Ptr);
+    comptime {
+        if (RAW_POINTERS.len % ptr_size != 0) {
+            @compileError("pointers.bin size is not a multiple of Ptr");
+        }
+    }
+
     const i = @as(usize, cp);
-    if (i >= POINTERS.*.len) {
+    // DO NOT USE POINTERS.*.len
+    const count = RAW_POINTERS.len / ptr_size;
+    if (i >= count) {
         return null;
     }
+
+    // Trick
+    POINTERS.*.len = count;
 
     const p = POINTERS.*[i];
 
